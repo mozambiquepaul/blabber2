@@ -3,11 +3,11 @@ import tweepy
 import os
 
 # Load the Twitter API credentials and OpenAI API key
-consumer_key = "UXa53PchB3GcKYwTeqOexcU6P"
-consumer_secret = "22MNTwPl5aBREyLp3XH9mZprFyhEYd0fsS0eUsY5ZyiXrTDRAZ"
-access_token = "860639827-W8l8F999mac4T5Z1f1AV9LRuEI0xuANJt0lWReOk"
-access_token_secret = "v6aWN6jeQr4vmo8O0OPbXJKQIN4gwj5JPRFHKKBqvTObM"
-openai.api_key = "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"
+consumer_key = os.environ['TWITTER_CONSUMER_KEY']
+consumer_secret = os.environ['TWITTER_CONSUMER_SECRET']
+access_token = os.environ['TWITTER_ACCESS_TOKEN']
+access_token_secret = os.environ['TWITTER_ACCESS_TOKEN_SECRET']
+openai.api_key = os.environ['OPENAI_API_KEY']
 
 # Authenticate with the Twitter API
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -34,21 +34,22 @@ def respond_to_tweet(tweet):
     )
 
 # Define a class that listens for incoming tweets and direct messages
-class MyStreamListener(tweepy.Stream):
+class MyStreamListener(tweepy.StreamListener):
     def __init__(self, api):
         self.api = api
-        super().__init__(auth=self.api.auth, listener=self)
-
+        super().__init__(
+            consumer_key, consumer_secret, access_token, access_token_secret
+        )
     def on_status(self, status):
-        if status.user.id != self.api.me().id:  # Ignore self-tweets
+        if status.user.id != api.me().id:  # Ignore self-tweets
             respond_to_tweet(status)
-
     def on_direct_message(self, message):
-        if message.sender_id != self.api.me().id:  # Ignore self-messages
+        if message.sender_id != api.me().id:  # Ignore self-messages
             respond_to_tweet(message)
 
 # Create a stream to listen for incoming tweets and direct messages
 myStreamListener = MyStreamListener(api)
+myStream = tweepy.Stream(auth = myStreamListener.auth, listener=myStreamListener)
 
 # Start listening for incoming tweets and direct messages
-myStreamListener.filter(track=[api.me().screen_name], is_async=True)
+myStream.filter(track=[api.me().screen_name], is_async=True)
