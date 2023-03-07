@@ -33,23 +33,21 @@ def respond_to_tweet(tweet):
         auto_populate_reply_metadata=True,
     )
 
-# Define a class that listens for incoming tweets and direct messages
-class MyStreamListener(tweepy.StreamListener):
-    def __init__(self, api):
-        self.api = api
-        super().__init__(
-            consumer_key, consumer_secret, access_token, access_token_secret
-        )
+# Define a class that inherits from tweepy.Stream and overrides on_status and on_direct_message
+class MyStream(tweepy.Stream):
+    def __init__(self, auth):
+        super().__init__(auth=auth, listener=self)
+
     def on_status(self, status):
         if status.user.id != api.me().id:  # Ignore self-tweets
             respond_to_tweet(status)
+
     def on_direct_message(self, message):
         if message.sender_id != api.me().id:  # Ignore self-messages
             respond_to_tweet(message)
 
 # Create a stream to listen for incoming tweets and direct messages
-myStreamListener = MyStreamListener(api)
-myStream = tweepy.Stream(auth = myStreamListener.auth, listener=myStreamListener)
+myStream = MyStream(auth)
 
 # Start listening for incoming tweets and direct messages
 myStream.filter(track=[api.me().screen_name], is_async=True)
