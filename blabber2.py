@@ -1,6 +1,6 @@
-import openai
 import tweepy
 import os
+import openai
 
 # Load the Twitter API credentials and OpenAI API key
 consumer_key = os.environ['TWITTER_CONSUMER_KEY']
@@ -33,28 +33,26 @@ def respond_to_tweet(tweet):
         auto_populate_reply_metadata=True,
     )
 
-# Define a class that inherits from tweepy.Stream and listens for incoming tweets and direct messages
+# Define a class that listens for incoming tweets and direct messages
 class MyStream(tweepy.Stream):
-    def __init__(self, auth):
-        super().__init__(
-            consumer_key=consumer_key,
-            consumer_secret=consumer_secret,
-            access_token=access_token,
-            access_token_secret=access_token_secret,
-            auth=auth,
-            listener=self,
-        )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.myStreamListener = MyStreamListener()
 
     def on_status(self, status):
         if status.user.id != api.me().id:  # Ignore self-tweets
-            respond_to_tweet(status)
+            self.myStreamListener.respond_to_tweet(status)
 
     def on_direct_message(self, message):
         if message.sender_id != api.me().id:  # Ignore self-messages
-            respond_to_tweet(message)
+            self.myStreamListener.respond_to_tweet(message)
+
+class MyStreamListener:
+    def respond_to_tweet(self, tweet):
+        respond_to_tweet(tweet)
 
 # Create a stream to listen for incoming tweets and direct messages
-myStream = MyStream(auth)
+myStream = MyStream(auth=api.auth, listener=None)
 
 # Start listening for incoming tweets and direct messages
 myStream.filter(track=[api.me().screen_name], is_async=True)
