@@ -3,11 +3,11 @@ import tweepy
 import os
 
 # Load the Twitter API credentials and OpenAI API key
-consumer_key = UXa53PchB3GcKYwTeqOexcU6P
-consumer_secret = 22MNTwPl5aBREyLp3XH9mZprFyhEYd0fsS0eUsY5ZyiXrTDRAZ
-access_token = 860639827-W8l8F999mac4T5Z1f1AV9LRuEI0xuANJt0lWReOk
-access_token_secret = v6aWN6jeQr4vmo8O0OPbXJKQIN4gwj5JPRFHKKBqvTObM
-openai.api_key = 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
+consumer_key = "UXa53PchB3GcKYwTeqOexcU6P"
+consumer_secret = "22MNTwPl5aBREyLp3XH9mZprFyhEYd0fsS0eUsY5ZyiXrTDRAZ"
+access_token = "860639827-W8l8F999mac4T5Z1f1AV9LRuEI0xuANJt0lWReOk"
+access_token_secret = "v6aWN6jeQr4vmo8O0OPbXJKQIN4gwj5JPRFHKKBqvTObM"
+openai.api_key = "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"
 
 # Authenticate with the Twitter API
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
